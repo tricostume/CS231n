@@ -192,11 +192,21 @@ plt.show()
 
 # ### Inline question 1:
 # Describe the misclassification results that you see. Do they make sense?
-
+# Given that representations are function of gradients and colors, it could be
+# expected that images have imilar gradients or similar backgrounds. In this
+# case planes can be confused with birds. Colors are also important as then the
+# classifier can outout images of similar color content in the hue spectrum
+# indistinctively. 
 # ## Neural Network on image features
-# Earlier in this assigment we saw that training a two-layer neural network on raw pixels achieved better classification performance than linear classifiers on raw pixels. In this notebook we have seen that linear classifiers on image features outperform linear classifiers on raw pixels. 
+# Earlier in this assigment we saw that training a two-layer neural network on
+# raw pixels achieved better classification performance than linear classifiers 
+#on raw pixels. In this notebook we have seen that linear classifiers on image 
+#features outperform linear classifiers on raw pixels. 
 # 
-# For completeness, we should also try training a neural network on image features. This approach should outperform all previous approaches: you should easily be able to achieve over 55% classification accuracy on the test set; our best model achieves about 60% classification accuracy.
+# For completeness, we should also try training a neural network on image 
+#features. This approach should outperform all previous approaches: you should 
+#easily be able to achieve over 55% classification accuracy on the test set; 
+#our best model achieves about 60% classification accuracy.
 
 # In[ ]:
 
@@ -221,15 +231,53 @@ best_net = None
 # cross-validate various parameters as in previous sections. Store your best   #
 # model in the best_net variable.                                              #
 ################################################################################
-pass
+hidden_sizes = [400]
+learning_rates = [3e-9]
+batch_sizes = [450]
+regularization_strengths =[5e5]
+best_val = -1
+input_size = X_train_feats.shape[1]
+num_classes = 10
+best_combination = [-1,-1,-1,-1]
+combination_acc_history = np.zeros((len(hidden_sizes),len(learning_rates),len(batch_sizes),len(regularization_strengths)))
+for i in range(len(hidden_sizes)):
+     for j in range(len(learning_rates)):
+         for k in range(len(batch_sizes)):
+             for l in range(len(regularization_strengths)): 
+                 print('Initialization combinaton:',i,j,k,l)
+                 net = TwoLayerNet(input_size, hidden_sizes[i], num_classes)
+                 # Train the network
+                 stats = net.train(X_train_feats, y_train, X_val_feats, y_val,
+                            num_iters=1500, batch_size=batch_sizes[k],
+                            learning_rate=learning_rates[j], learning_rate_decay=0.95,
+                            reg=regularization_strengths[l], verbose=True)
+                 # Predict on the validation set
+                 val_acc = (net.predict(X_val_feats) == y_val).mean()
+                 if best_val < val_acc:
+                    best_val = val_acc
+                    best_net = net
+                    best_combination = [i,j,k,l]
+                    combination_acc_history[i,j,k,l] = val_acc
+                 print('Best combination until now:',best_combination, "with acc = ",best_val)    
 ################################################################################
 #                              END OF YOUR CODE                                #
 ################################################################################
+plt.subplot(2, 1, 1)
+plt.plot(stats['loss_history'])
+plt.title('Loss history')
+plt.xlabel('Iteration')
+plt.ylabel('Loss')
 
+plt.subplot(2, 1, 2)
+plt.plot(stats['train_acc_history'], label='train')
+plt.plot(stats['val_acc_history'], label='val')
+plt.title('Classification accuracy history')
+plt.xlabel('Epoch')
+plt.ylabel('Clasification accuracy')
+plt.legend(['train','val'])
+plt.show()
 
 # In[ ]:
-
-
 # Run your neural net classifier on the test set. You should be able to
 # get more than 55% accuracy.
 
