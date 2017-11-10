@@ -37,7 +37,7 @@ get_ipython().run_line_magic('autoreload', '2')
 
 from cs231n.features import color_histogram_hsv, hog_feature
 
-def get_CIFAR10_data(num_training=9000, num_validation=1000, num_test=1000):
+def get_CIFAR10_data(num_training=49000, num_validation=1000, num_test=1000):
     # Load the raw CIFAR-10 data
     cifar10_dir = 'cs231n/datasets/cifar-10-batches-py'
     X_train, y_train, X_test, y_test = load_CIFAR10(cifar10_dir)
@@ -231,10 +231,10 @@ best_net = None
 # cross-validate various parameters as in previous sections. Store your best   #
 # model in the best_net variable.                                              #
 ################################################################################
-hidden_sizes = [400]
-learning_rates = [3e-9]
-batch_sizes = [450]
-regularization_strengths =[5e5]
+hidden_sizes = [500]
+learning_rates = [1e-1,5e-1,1]
+batch_sizes = [200]
+regularization_strengths =[1e-3,5e-3,5e-2]
 best_val = -1
 input_size = X_train_feats.shape[1]
 num_classes = 10
@@ -248,7 +248,7 @@ for i in range(len(hidden_sizes)):
                  net = TwoLayerNet(input_size, hidden_sizes[i], num_classes)
                  # Train the network
                  stats = net.train(X_train_feats, y_train, X_val_feats, y_val,
-                            num_iters=1500, batch_size=batch_sizes[k],
+                            num_iters=2000, batch_size=batch_sizes[k],
                             learning_rate=learning_rates[j], learning_rate_decay=0.95,
                             reg=regularization_strengths[l], verbose=True)
                  # Predict on the validation set
@@ -258,7 +258,7 @@ for i in range(len(hidden_sizes)):
                     best_net = net
                     best_combination = [i,j,k,l]
                     combination_acc_history[i,j,k,l] = val_acc
-                 print('Best combination until now:',best_combination, "with acc = ",best_val)    
+                 print('Best combination until now:',best_combination, "with acc = ",best_val) 
 ################################################################################
 #                              END OF YOUR CODE                                #
 ################################################################################
@@ -283,7 +283,11 @@ plt.show()
 
 test_acc = (net.predict(X_test_feats) == y_test).mean()
 print(test_acc)
-
+# REACHED 58.9% ACCURACY ON TEST SET
+W1 = best_net.params['W1']
+W2 = best_net.params['W2']
+b1 = best_net.params['b1']
+b2 = best_net.params['b2']
 
 # # Bonus: Design your own features!
 # 
