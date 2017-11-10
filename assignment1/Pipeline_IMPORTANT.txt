@@ -1,0 +1,26 @@
+Image Classification Pipeline
+
+    Split training data into training set and validation set
+    Preprocess the training set
+        mean subtraction
+        normalization
+        PCA and Whitening
+        apply preprocessing statistics (e.g. mean image) to all splits
+    Weight Initialization
+        small random numbers
+        sqrt(2/n)
+    Batch Normalization: insert the BatchNorm layer immediately after fully connected layers or convolutional layers.
+    Regularization
+        L2 regularization
+        L1 regularization
+        L1 + L2
+        Max norm constraints
+        Dropout/inverted dropout
+        Common Choice: single, global L2 Regularization and dropout (p = 0.5)
+    Train the model and evaluate the model on validation set
+        Optimization
+            Stochastic Gradient Descent
+    Cross-Validation for hyperparameter tuning
+        List all the hyperparameters.
+        Grid Search
+    Train the model with the optimal hyperparameter setting and make predictions on testing set.
